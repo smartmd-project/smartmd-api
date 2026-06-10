@@ -1,3 +1,4 @@
+import 'dotenv/config'; // Tải biến môi trường từ file .env 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
