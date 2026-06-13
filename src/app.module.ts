@@ -9,11 +9,10 @@ import { AccessTokenGuard } from './common/guards/access-token.guards';
   imports: [AuthModule, UserModule, NoteModule, CommonModule],
   providers: [
     {
-      //khai báo AccessTokenGuard là global guard để áp dụng cho các router 
+      //khai báo AccessTokenGuard là global guard để áp dụng cho các router
       provide: 'APP_GUARD',
       useClass: AccessTokenGuard,
-    }
+    },
   ],
-
 })
 export class AppModule {}
