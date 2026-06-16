@@ -1,9 +1,9 @@
-import { Global, Module } from "@nestjs/common";
-import { PrismaService } from "./service/prisma.service";
-import { HasingService } from "./service/hasing.service";
-import { TokenService } from "./service/token.service";
-import { JwtModule } from "@nestjs/jwt";
-import { AccessTokenGuard } from "./guards/access-token.guards";
+import { Global, Module } from '@nestjs/common';
+import { PrismaService } from './service/prisma.service';
+import { HasingService } from './service/hasing.service';
+import { TokenService } from './service/token.service';
+import { JwtModule } from '@nestjs/jwt';
+import { AccessTokenGuard } from './guards/access-token.guards';
 
 @Global()
 @Module({
@@ -13,7 +13,7 @@ import { AccessTokenGuard } from "./guards/access-token.guards";
     TokenService,
     {
       //khai báo AccessTokenGuard là global guard để áp dụng cho các router
-      provide: "APP_GUARD",
+      provide: 'APP_GUARD',
       useClass: AccessTokenGuard,
     },
   ],

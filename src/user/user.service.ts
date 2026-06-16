@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common";
-import { PrismaService } from "../common/service/prisma.service";
-import { UpdateUserDto } from "./dto/update-user.dto";
-import { HasingService } from "../common/service/hasing.service";
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../common/service/prisma.service';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { HasingService } from '../common/service/hasing.service';
 
 @Injectable()
 export class UserService {
@@ -22,11 +22,11 @@ export class UserService {
         },
       });
       if (!user) {
-        throw new Error("User not found!");
+        throw new Error('User not found!');
       }
       return user;
     } catch (error) {
-      throw new Error("Failed to fetch user information");
+      throw new Error('Failed to fetch user information');
     }
   }
   async updateInfoUsers(userId: string, updateUser: UpdateUserDto) {
@@ -41,7 +41,7 @@ export class UserService {
       });
       return user;
     } catch (error) {
-      throw new Error("Failed to update user information");
+      throw new Error('Failed to update user information');
     }
   }
 }

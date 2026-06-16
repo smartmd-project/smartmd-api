@@ -1,7 +1,7 @@
-import "dotenv/config"; // Tải biến môi trường từ file .env
-import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
-import cookieParser from "cookie-parser";
+import 'dotenv/config'; // Tải biến môi trường từ file .env
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());

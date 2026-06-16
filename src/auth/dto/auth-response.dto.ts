@@ -1,5 +1,5 @@
-import { Exclude } from "class-transformer";
-import { IsString } from "class-validator";
+import { Exclude } from 'class-transformer';
+import { IsString } from 'class-validator';
 
 //định nghĩa serialize dữ liệu trả về cho client khi người dùng đăng ký, đăng nhập, đăng xuất và làm mới token
 export class SignupResDto {

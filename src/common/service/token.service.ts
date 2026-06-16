@@ -1,6 +1,6 @@
-import { Injectable } from "@nestjs/common";
-import { JwtService, type JwtSignOptions } from "@nestjs/jwt";
-import { TokenPayload } from "../types/jwt.type";
+import { Injectable } from '@nestjs/common';
+import { JwtService, type JwtSignOptions } from '@nestjs/jwt';
+import { TokenPayload } from '../types/jwt.type';
 
 @Injectable()
 export class TokenService {
@@ -8,12 +8,12 @@ export class TokenService {
 
   private getJwtOptions(
     secret: string | undefined,
-    expiresIn: JwtSignOptions["expiresIn"],
+    expiresIn: JwtSignOptions['expiresIn'],
   ): JwtSignOptions {
     return {
       secret,
       expiresIn,
-      algorithm: "HS256",
+      algorithm: 'HS256',
     };
   }
 
@@ -23,7 +23,7 @@ export class TokenService {
       payload,
       this.getJwtOptions(
         process.env.ACCESS_TOKEN_SECRET,
-        process.env.ACCESS_TOKEN_EXPIRES_IN as JwtSignOptions["expiresIn"],
+        process.env.ACCESS_TOKEN_EXPIRES_IN as JwtSignOptions['expiresIn'],
       ),
     );
   }
@@ -33,7 +33,7 @@ export class TokenService {
       payload,
       this.getJwtOptions(
         process.env.REFRESH_TOKEN_SECRET,
-        process.env.REFRESH_TOKEN_EXPIRES_IN as JwtSignOptions["expiresIn"],
+        process.env.REFRESH_TOKEN_EXPIRES_IN as JwtSignOptions['expiresIn'],
       ),
     );
   }

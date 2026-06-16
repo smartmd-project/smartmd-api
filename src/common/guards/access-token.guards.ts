@@ -1,13 +1,8 @@
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  UnauthorizedException,
-} from "@nestjs/common";
-import type { Request } from "express";
-import { TokenService } from "../service/token.service";
-import { Reflector } from "@nestjs/core";
-import { IS_PUBLIC_KEY } from "../decorator/public.decorator";
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import type { Request } from 'express';
+import { TokenService } from '../service/token.service';
+import { Reflector } from '@nestjs/core';
+import { IS_PUBLIC_KEY } from '../decorator/public.decorator';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
@@ -31,8 +26,8 @@ export class AccessTokenGuard implements CanActivate {
       throw new UnauthorizedException(); //mã code 401 từ chối yêu cầu từ client gửi lên
     }
     try {
-      const decodedAccessToken = await this.tokenService.verifyAccessToken(accessToken); 
-      request['user'] = { ...decodedAccessToken }; 
+      const decodedAccessToken = await this.tokenService.verifyAccessToken(accessToken);
+      request['user'] = { ...decodedAccessToken };
 
       return true;
     } catch (error) {
