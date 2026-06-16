@@ -67,7 +67,7 @@ export class NoteController {
     @Req() req: Request & { user: TokenPayload },
     @Param("id") id: string,
   ) {
-    await this.noteService.deleteNode(req.user.userId, id);
+    await this.noteService.deleteNote(req.user.userId, id);
     return new DeleteNoteResponseDto({ message: "Note deleted successfully" });
   }
 }

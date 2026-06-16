@@ -5,12 +5,12 @@ import {
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
+import { TokenService } from "../service/token.service";
 
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(private readonly tokenService: TokenService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
@@ -23,9 +23,7 @@ export class RefreshTokenGuard implements CanActivate {
 
     try {
       //Verify bằng secret key riêng của Refresh Token
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.JWT_REFRESH_SECRET || "rt-secret",
-      });
+      const payload = await this.tokenService.verifyRefreshToken(token);
 
       //Nhét cả payload VÀ chuỗi token thô vào request['user']
       request["user"] = {

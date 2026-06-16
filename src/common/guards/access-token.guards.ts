@@ -31,10 +31,9 @@ export class AccessTokenGuard implements CanActivate {
       throw new UnauthorizedException(); //mã code 401 từ chối yêu cầu từ client gửi lên
     }
     try {
-      const decodedAccessToken =
-        await this.tokenService.verifyAccessToken(accessToken); //kiểm tra xem cái accesstoken còn hạn ko
-      request.user = decodedAccessToken;
-      //tạo ra 1 trường user mới tại obj request lưu trữ payload của accesstoken để cho controller sau đó dễ dang xử lí
+      const decodedAccessToken = await this.tokenService.verifyAccessToken(accessToken); 
+      request['user'] = { ...decodedAccessToken }; 
+
       return true;
     } catch (error) {
       throw new UnauthorizedException();

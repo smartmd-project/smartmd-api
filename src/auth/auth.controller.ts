@@ -26,7 +26,7 @@ const cookieOptions = {
 };
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Public() //đánh dấu route này là public để cho phép client có thể truy cập mà ko cần access token
   @UseInterceptors(ClassSerializerInterceptor) //sử dụng interceptor để tự động serialize dữ liệu trả về cho client
@@ -58,8 +58,16 @@ export class AuthController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Post("signout")
-  async signout(@Body("refreshToken") refreshToken: string) {
-    const result = await this.authService.signout(refreshToken);
+  async signout(@Req() req,@Res({ passthrough: true }) response: Response,
+  ) {
+    const { userId} = req.user;
+
+    const result = await this.authService.signout(userId);
+
+    response.clearCookie("refresh_token", cookieOptions);
+
+    response.clearCookie("access_token", cookieOptions);
+
     return new SignoutResDto(result);
   }
 
@@ -67,12 +75,14 @@ export class AuthController {
   @UseGuards(RefreshTokenGuard)
   @Post("refresh-token")
   async refreshToken(
-    @Body("refreshToken") refreshToken: string,
     @Req() req,
     @Res({ passthrough: true }) response: Response,
   ) {
+    //lấy ra userID và refreshToken từ cookie mà req kèm theo
+    const { userId, refreshToken: oldRefreshToken } = req.user;
+    console.log(userId, oldRefreshToken);
     const { accessToken, refreshToken: newRefreshToken } =
-      await this.authService.refreshToken(req.user.userId, refreshToken);
+      await this.authService.refreshToken(userId, oldRefreshToken);
     //refreshToken được lấy ra và gán vào 1 biến mới là newRefreshToken
     response.cookie("refresh_token", newRefreshToken, {
       ...cookieOptions,
