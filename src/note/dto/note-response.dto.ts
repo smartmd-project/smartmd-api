@@ -37,3 +37,19 @@ export class RenderNoteResponseDto {
     Object.assign(this, partial);
   }
 }
+
+export class CheckGrammarResponseDto {
+  originalText: string;
+  totalErrors: number;
+  errors: {
+    message: string; // Thông báo lỗi (Ví dụ: "Phát hiện lỗi chính tả")
+    offset: number; // Vị trí ký tự bắt đầu lỗi trong chuỗi
+    length: number; // Độ dài của từ bị lỗi
+    context: string; // Ngữ cảnh xung quanh lỗi
+    suggestions: string[]; // Các gợi ý sửa lỗi
+  }[];
+
+  constructor(partial: Partial<CheckGrammarResponseDto>) {
+    Object.assign(this, partial);
+  }
+}

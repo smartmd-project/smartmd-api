@@ -13,13 +13,14 @@ import {
 import { type Request } from 'express';
 import { NoteService } from './note.service';
 import {
+  CheckGrammarResponseDto,
   CreateNoteResponseDto,
   DeleteNoteResponseDto,
   GetNoteResponseDto,
   RenderNoteResponseDto,
 } from './dto/note-response.dto';
 import { type TokenPayload } from '../common/types/jwt.type';
-import { CreateNote, UpdateNoteById } from './dto/note.dto';
+import { CheckGrammarDto, CreateNote, UpdateNoteById } from './dto/note.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('note')
@@ -75,5 +76,12 @@ export class NoteController {
     const {userId} = req.user;
     const contentRender = await this.noteService.renderNoteById(userId, id);
     return new RenderNoteResponseDto(contentRender);
+  }
+
+  //check ngữ pháp nội dung ghi chú
+  @Post('check-grammar')
+  async checkGrammar(@Body() body: CheckGrammarDto) {
+    const result = await this.noteService.checkGrammar(body.content, body.language);
+    return new CheckGrammarResponseDto(result);
   }
 }
