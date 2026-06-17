@@ -68,7 +68,6 @@ export class AuthController {
   async refreshToken(@Req() req, @Res({ passthrough: true }) response: Response) {
     //lấy ra userID và refreshToken từ cookie mà req kèm theo
     const { userId, refreshToken: oldRefreshToken } = req.user;
-    console.log(userId, oldRefreshToken);
     const { accessToken, refreshToken: newRefreshToken } = await this.authService.refreshToken(
       userId,
       oldRefreshToken,

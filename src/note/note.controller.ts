@@ -16,6 +16,7 @@ import {
   CreateNoteResponseDto,
   DeleteNoteResponseDto,
   GetNoteResponseDto,
+  RenderNoteResponseDto,
 } from './dto/note-response.dto';
 import { type TokenPayload } from '../common/types/jwt.type';
 import { CreateNote, UpdateNoteById } from './dto/note.dto';
@@ -37,6 +38,7 @@ export class NoteController {
     const note = await this.noteService.getNoteById(req.user.userId, id);
     return new GetNoteResponseDto(note);
   }
+  
   //cập nhật ghi chú
   @Patch(':id')
   async updateNoteById(
@@ -47,16 +49,31 @@ export class NoteController {
     const updatedNote = await this.noteService.updateNoteById(req.user.userId, id, updateData);
     return new GetNoteResponseDto(updatedNote);
   }
+
+  //tạo mới một ghi chú
   @Post()
   async createNote(@Req() req: Request & { user: TokenPayload }, @Body() createData: CreateNote) {
     const note = await this.noteService.createNote(req.user.userId, createData);
-    return new CreateNoteResponseDto({ message: 'Note created successfully' });
+    return new CreateNoteResponseDto({ 
+      id: note.id,
+      title: note.title,
+      content: note.content,
+      message: 'Note created successfully' 
+    });
   }
+
+  //xóa một ghi chú
   @Delete(':id')
   async deleteNoteById(@Req() req: Request & { user: TokenPayload }, @Param('id') id: string) {
     await this.noteService.deleteNote(req.user.userId, id);
     return new DeleteNoteResponseDto({ message: 'Note deleted successfully' });
   }
+
+  //render một ghi chú ra HTML
   @Get(':id/render')
-  async renderNoteById(@Req() req: Request & { user: TokenPayload }, @Param('id') id: string) {}
+  async renderNoteById(@Req() req: Request & { user: TokenPayload }, @Param('id') id: string) {
+    const {userId} = req.user;
+    const contentRender = await this.noteService.renderNoteById(userId, id);
+    return new RenderNoteResponseDto(contentRender);
+  }
 }

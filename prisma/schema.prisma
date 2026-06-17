@@ -39,8 +39,8 @@ model Note {
   userId    String
   title     String
   content   String   @db.Text 
-  isPublic  Boolean  @default(false)
-  isDeleted Boolean  @default(false)
+  isPublic  Boolean  @default(false) // Cờ đánh dấu ghi chú có được chia sẻ công khai hay không
+  isDeleted Boolean  @default(false) // Cờ đánh dấu ghi chú đã bị xóa (soft delete)
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
 

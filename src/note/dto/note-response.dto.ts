@@ -1,5 +1,6 @@
 export class GetNoteResponseDto {
   id: string;
+  userId: string;
   title: string;
   content: string;
   createdAt: Date;
@@ -16,4 +17,23 @@ export class DeleteNoteResponseDto {
     Object.assign(this, partial);
   }
 }
-export class CreateNoteResponseDto extends DeleteNoteResponseDto {}
+export class CreateNoteResponseDto  {
+  id : string;
+  title : string;
+  content : string;
+  message: string;
+
+  constructor(partial: Partial<CreateNoteResponseDto>) {
+    Object.assign(this, partial);
+  }
+}
+
+export class RenderNoteResponseDto {
+  id: string;
+  title: string;
+  content: string;
+
+  constructor(partial: Partial<RenderNoteResponseDto>) {
+    Object.assign(this, partial);
+  }
+}
