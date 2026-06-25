@@ -202,4 +202,29 @@ export class NoteService {
       throw new InternalServerErrorException('Unable to check grammar. Please try again later!');
     }
   }
+  async importMarkdownFile(file: Express.Multer.File) {
+  if (!file) {
+    throw new BadRequestException('No file uploaded.');
+  }
+
+  const hasMarkdownExtension = file.originalname
+    .toLowerCase()
+    .endsWith('.md');
+
+  const hasMarkdownMimeType = [
+    'text/markdown',
+    'text/plain',
+  ].includes(file.mimetype);
+
+  if (!hasMarkdownExtension && !hasMarkdownMimeType) {
+    throw new BadRequestException(
+      'Invalid file type. Please upload a Markdown file.',
+    );
+  }
+
+  return {
+    fileName: file.originalname,
+    content: file.buffer.toString('utf-8'),
+  };
+}
 }

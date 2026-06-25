@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Req,
+  UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { type Request } from 'express';
@@ -17,10 +18,13 @@ import {
   CreateNoteResponseDto,
   DeleteNoteResponseDto,
   GetNoteResponseDto,
+  ImportFileResponseDto,
   RenderNoteResponseDto,
 } from './dto/note-response.dto';
 import { type TokenPayload } from '../common/types/jwt.type';
 import { CheckGrammarDto, CreateNote, UpdateNoteById } from './dto/note.dto';
+import 'multer'; // Import multer for file handling
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('note')
@@ -83,5 +87,15 @@ export class NoteController {
   async checkGrammar(@Body() body: CheckGrammarDto) {
     const result = await this.noteService.checkGrammar(body.content, body.language);
     return new CheckGrammarResponseDto(result);
+  }
+
+  @Post('import')
+
+  @UseInterceptors(FileInterceptor('file')) 
+  // bộ lọc chuyển đổi file được tải lên thành một đối tượng có thể sử dụng trong phương thức
+  
+  async importMarkdownFile(@UploadedFile() file: Express.Multer.File) {
+     const result = await this.noteService.importMarkdownFile(file);
+     return new ImportFileResponseDto(result);
   }
 }

@@ -14,15 +14,35 @@ model User {
   id        String    @id @default(uuid())
   name      String
   email     String    @unique
-  password  String
+  password  String?
+  avatarUrl String?
   createdAt DateTime  @default(now())
   updateAt  DateTime  @updatedAt
 
   // Định nghĩa các mối quan hệ (Quan hệ 1 - Nhiều)
   sessions  Session[]
   notes     Note[]
+  oauthAccounts OAuthAccount[]
+}
+model OAuthAccount {
+  id             String   @id @default(uuid())
+  userId         String
+  provider       OAuthProvider
+  //id của người dùng từ nhà cung cấp OAuth (ví dụ: GitHub, Google)
+  providerUserId String
+  providerEmail  String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  // Khóa ngoại nối về bảng User kèm cấu hình Cascade Delete
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])
+  @@index([userId])
 }
 
+enum OAuthProvider {
+  GITHUB
+}
 model Session {
   id           String   @id @default(uuid())
   userId       String

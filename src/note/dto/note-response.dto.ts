@@ -53,3 +53,11 @@ export class CheckGrammarResponseDto {
     Object.assign(this, partial);
   }
 }
+export class ImportFileResponseDto {
+  fileName : string;
+  content: string;
+
+  constructor(partial: Partial<ImportFileResponseDto>) {
+    Object.assign(this, partial);
+  }
+}
