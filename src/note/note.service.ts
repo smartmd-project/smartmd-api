@@ -20,7 +20,7 @@ export class NoteService {
   async getNotes(userId: string) {
     try {
       return await this.prismaService.note.findMany({
-        where: { userId },
+        where: { userId , isDeleted: false },
       });
     } catch (error) {
       throw new InternalServerErrorException('Unable to load notes. Please try again later!');
@@ -30,7 +30,7 @@ export class NoteService {
   async getNoteById(userId: string, id: string) {
     try {
       const note = await this.prismaService.note.findUnique({
-        where: { id, userId },
+        where: { id, userId, isDeleted: false },
       });
 
       if (!note) {
@@ -48,7 +48,7 @@ export class NoteService {
   async updateNoteById(userId: string, id: string, updateData: UpdateNoteById) {
     try {
       return await this.prismaService.note.update({
-        where: { id, userId },
+        where: { id, userId, isDeleted: false },
         data: updateData,
       });
     } catch (error) {
@@ -78,8 +78,9 @@ export class NoteService {
 
   async deleteNote(userId: string, id: string) {
     try {
-      await this.prismaService.note.delete({
-        where: { id, userId },
+      await this.prismaService.note.update({
+        where: { id, userId, isDeleted: false },
+        data: { isDeleted: true },
       });
       return { message: 'Delete note successfully' };
     } catch (error) {

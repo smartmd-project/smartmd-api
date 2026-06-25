@@ -9,6 +9,16 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import {
+  ApiBody,
+  ApiCookieAuth,
+  ApiCreatedResponse,
+  ApiFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { CreateUserDto, SigninDto } from './dto/auth.dto';
 import {
@@ -27,10 +37,17 @@ const cookieOptions = {
   secure: true,
   sameSite: 'lax' as const,
 };
+
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiOperation({ summary: 'Create a new account' })
+  @ApiCreatedResponse({
+    description: 'User account created successfully.',
+    type: SignupResDto,
+  })
   @Public() //đánh dấu route này là public để cho phép client có thể truy cập mà ko cần access token
   @UseInterceptors(ClassSerializerInterceptor) //sử dụng interceptor để tự động serialize dữ liệu trả về cho client
   @Post('signup')
@@ -39,6 +56,12 @@ export class AuthController {
     return new SignupResDto(user);
   }
 
+  @ApiOperation({ summary: 'Sign in with email and password' })
+  @ApiOkResponse({
+    description: 'Sign in successful. Access and refresh tokens are set in HTTP-only cookies.',
+    type: SigninResDto,
+  })
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials or OAuth-only account.' })
   @Public()
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('signin')
@@ -55,6 +78,12 @@ export class AuthController {
     return new SigninResDto({ message: 'Signin successful' });
   }
 
+  @ApiOperation({ summary: 'Sign out current user' })
+  @ApiCookieAuth('access_token')
+  @ApiOkResponse({
+    description: 'User signed out and auth cookies cleared.',
+    type: SignoutResDto,
+  })
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('signout')
   async signout(@Req() req, @Res({ passthrough: true }) response: Response) {
@@ -69,6 +98,13 @@ export class AuthController {
     return new SignoutResDto(result);
   }
 
+  @ApiOperation({ summary: 'Refresh access token using refresh token cookie' })
+  @ApiCookieAuth('refresh_token')
+  @ApiOkResponse({
+    description: 'Refresh successful. New access and refresh token cookies are set.',
+    type: SigninResDto,
+  })
+  @ApiUnauthorizedResponse({ description: 'Invalid, expired, revoked, or reused refresh token.' })
   @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(RefreshTokenGuard)
   @Post('refresh-token')
@@ -92,6 +128,31 @@ export class AuthController {
   }
 
   //Change password
+  @ApiOperation({ summary: 'Change password for authenticated user' })
+  @ApiCookieAuth('access_token')
+  @ApiBody({
+    schema: {
+      example: {
+        oldPassword: 'secret123',
+        newPassword: 'newSecret123',
+      },
+      properties: {
+        oldPassword: {
+          type: 'string',
+          example: 'secret123',
+        },
+        newPassword: {
+          type: 'string',
+          example: 'newSecret123',
+        },
+      },
+      required: ['oldPassword', 'newPassword'],
+    },
+  })
+  @ApiOkResponse({
+    description: 'Password changed successfully.',
+    type: ChangePasswordResDto,
+  })
   @Post('change-password')
   async changePassword(@Req() req, @Body() body: { oldPassword: string; newPassword: string }) {
     const { userId } = req.user;
@@ -101,6 +162,8 @@ export class AuthController {
   }
 
   //Oauth github
+  @ApiOperation({ summary: 'Start GitHub OAuth login flow' })
+  @ApiFoundResponse({ description: 'Redirects user to GitHub OAuth authorization page.' })
   @Get('github')
   @UseGuards(GithubAuthGuard)
   @Public()
@@ -108,12 +171,15 @@ export class AuthController {
     // Initiates the GitHub OAuth2 login flow
   }
 
+  @ApiOperation({ summary: 'GitHub OAuth callback' })
+  @ApiFoundResponse({
+    description: 'Sets auth cookies and redirects to CLIENT_URL after successful GitHub login.',
+  })
   @Get('github/callback')
   @UseGuards(GithubAuthGuard)
   @Public()
   async githubLoginCallback(@Req() req, @Res() response: Response) {
     const result = await this.authService.githubLogin(req.user);
-    console.log('GitHub user:', req.user);
     const { accessToken, refreshToken } = result;
     response.cookie('refresh_token', refreshToken, {
       ...cookieOptions,
